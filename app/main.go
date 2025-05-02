@@ -3,18 +3,22 @@ package main
 import (
 	"context"
 	"filestore-backup/filestore_backup"
+	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	filestore "cloud.google.com/go/filestore/apiv1"
 )
 
 var (
-	projectID    = os.Getenv("GCP_PROJECT_ID")
-	location     = os.Getenv("GCP_LOCATION")
-	zone         = os.Getenv("GCP_ZONE")
-	instanceName = os.Getenv("GCP_FILESTORE_INSTANCE")
+	projectID      = os.Getenv("GCP_PROJECT_ID")
+	location       = os.Getenv("GCP_LOCATION")
+	zone           = os.Getenv("GCP_ZONE")
+	instanceName   = os.Getenv("GCP_FILESTORE_INSTANCE")
+	fileshareName  = os.Getenv("GCP_FILESTORE_SHARE_NAME")
+	backupDuration = os.Getenv("BACKUP_DURATION")
 )
 
 func main() {
@@ -32,12 +36,22 @@ func main() {
 	backupName := "automated-backup-" + time.Now().Format("2006-01-02")
 	backupDescription := "Automated daily backup"
 
-	if err := filestore_backup.CreateBackup(ctx, client, projectID, location, zone, instanceName, backupName, backupDescription); err != nil {
+	if err := filestore_backup.CreateBackup(ctx, client, projectID, location, zone, instanceName, backupName, backupDescription, fileshareName); err != nil {
 		log.Printf("Failed to create backup: %v", err)
 	}
 
-	// 7 days
-	olderThan := time.Duration(168) * time.Hour
+	if backupDuration == "" {
+		fmt.Println("DURATION environment variable not set.  Using default of 168 hours (7 days).")
+		backupDuration = "168"
+	}
+
+	durationHours, err := strconv.Atoi(backupDuration)
+	if err != nil {
+		fmt.Printf("Error converting DURATION to integer: %v.  Using default of 168 hours (7 days).\n", err)
+		durationHours = 168
+	}
+
+	olderThan := time.Duration(durationHours) * time.Hour
 
 	if err := filestore_backup.DeleteOldBackups(ctx, client, projectID, location, olderThan); err != nil {
 		log.Fatalf("Failed to delete old backups: %v", err)

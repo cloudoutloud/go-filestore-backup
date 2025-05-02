@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/filestore/apiv1/filestorepb"
 )
 
-func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, location, zone, instanceName, backupName, backupDescription string) error {
+func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, location, zone, instanceName, backupName, backupDescription, fileshareName string) error {
 	instanceFullName := fmt.Sprintf("projects/%s/locations/%s/instances/%s", projectID, zone, instanceName)
 	backupFullName := fmt.Sprintf("projects/%s/locations/%s/backups/%s", projectID, zone, backupName)
 
@@ -26,7 +26,7 @@ func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerCl
 		Backup: &filestorepb.Backup{
 			SourceInstance:  instanceFullName,
 			Description:     backupDescription,
-			SourceFileShare: "airflow",
+			SourceFileShare: fileshareName,
 		},
 	}
 
