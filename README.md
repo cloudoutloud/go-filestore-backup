@@ -7,23 +7,27 @@ Although backups are supported, these are not automated out of the box like mana
 This script will create a backup of a filestore instance named `automated-backup-<date-run>`
 Then will look and delete backups older than the set threshold to reduce cost.
 
-## Example build image
+## Example build/push image
 
-From the root of the repo.
+There is no automation currently around building and pushing the image to a private registry.
+
+Manual example using Docker cli, from the root of the repo.
 
 `docker build . -t filestore-backup:v1.0.1`
+
+Then using `docker push` to push to the registry.
 
 ## Deployment
 
 You normally only have access to the filestore from within a set VPC network.
 In the `k8s` folder then is example manifests on how to deploy this as a cron job and run within a Kubernetes clusters residing in the same VPC as the filestore.
-Alternatively, you could run this in other serverless offerings such as:
 
+Alternatively, you could run this in serverless offerings such as:
 [cloudrun](https://cloud.google.com/run)
 
 ## Authentication to GCP
 
-Scripts is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc) to auth.
+Script is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc) to authenticate.
 
 You can create a [GCP service account](https://cloud.google.com/iam/docs/service-account-overview) and grant the role [file.editor](https://cloud.google.com/iam/docs/understanding-roles#cloud-filestore-roles)
 
