@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: filestore-backup
+  namespace: filestore-backup
+spec:
+  schedule: "0 0 * * *" # Every day once
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600 # 1 hour
+      template:
+        spec:
+          containers:
+          - name: filestore-backup
+            image: filestore-backup:v1.0.1
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: GCP_PROJECT_ID
+              value: "example-project-1"
+            - name: GCP_LOCATION
+              value: "region"
+            - name: GCP_ZONE
+              value: "region-a"
+            - name: GCP_FILESTORE_INSTANCE
+              value: "filestore-1"
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/var/secrets/filestore-backup-sa.json"
+            - name: GCP_FILESTORE_SHARE_NAME
+              value: "example"
+            - name: BACKUP_DURATION
+              value: "168"
+            volumeMounts:
+            - name: secret-volume
+              mountPath: "/var/secrets"
+              readOnly: true
+          volumes:
+            - name: secret-volume
+              secret:
+                secretName: filestore-backup
+          restartPolicy: OnFailure
