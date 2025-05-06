@@ -23,6 +23,7 @@ spec:
               value: "region-a"
             - name: GCP_FILESTORE_INSTANCE
               value: "filestore-1"
+            # Env var to use if using GCP service account JSON key for auth
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: "/var/secrets/filestore-backup-sa.json"
             - name: GCP_FILESTORE_SHARE_NAME
@@ -30,11 +31,13 @@ spec:
             - name: BACKUP_DURATION
               value: "168"
             volumeMounts:
+            # Mount the secret to the container
             - name: secret-volume
               mountPath: "/var/secrets"
               readOnly: true
           volumes:
-            - name: secret-volume
-              secret:
-                secretName: filestore-backup
+          # Define the secret volume reference created in secret.yaml
+          - name: secret-volume
+            secret:
+              secretName: filestore-backup
           restartPolicy: OnFailure

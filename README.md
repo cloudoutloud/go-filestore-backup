@@ -25,13 +25,21 @@ In the `k8s` folder then is example manifests on how to deploy this as a cron jo
 Alternatively, you could run this in serverless offerings such as:
 [cloudrun](https://cloud.google.com/run)
 
-## Authentication to GCP
+## Authentication to Google Cloud (GCP)
 
-Script is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc) to authenticate.
+There are two various ways to authenticate to Google Cloud
 
-You can create a [GCP service account](https://cloud.google.com/iam/docs/service-account-overview) and grant the role [file.editor](https://cloud.google.com/iam/docs/understanding-roles#cloud-filestore-roles)
+Script is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc)
 
-You can then proceed to generate a service account JSON.
+1. Using Google Cloud service account
+
+This method is not ideal as long lived keys are generated.
+
+You can create a [Google Cloud service account](https://cloud.google.com/iam/docs/service-account-overview) and grant the role [file.editor](https://cloud.google.com/iam/docs/understanding-roles#cloud-filestore-roles)
+
+You can then proceed to generate a service account JSON key. Store key somewhere secure and reference the path in environment variable `GOOGLE_APPLICATION_CREDENTIALS`
+
+2. Workload identity (Recommend if running on GKE)
 
 ## Environment vars needed
 
