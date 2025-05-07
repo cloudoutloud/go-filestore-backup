@@ -9,9 +9,9 @@ import (
 	"cloud.google.com/go/filestore/apiv1/filestorepb"
 )
 
-func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, location, zone, instanceName, backupName, backupDescription, fileshareName string) error {
+func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, region, zone, instanceName, backupName, backupDescription, fileshareName string) error {
 	instanceFullName := fmt.Sprintf("projects/%s/locations/%s/instances/%s", projectID, zone, instanceName)
-	backupFullName := fmt.Sprintf("projects/%s/locations/%s/backups/%s", projectID, zone, backupName)
+	backupFullName := fmt.Sprintf("projects/%s/locations/%s/backups/%s", projectID, region, backupName)
 
 	// Check if the backup with same name already exists.
 	_, err := client.GetBackup(ctx, &filestorepb.GetBackupRequest{Name: backupFullName})
@@ -21,7 +21,7 @@ func CreateBackup(ctx context.Context, client *filestore.CloudFilestoreManagerCl
 	}
 
 	req := &filestorepb.CreateBackupRequest{
-		Parent:   fmt.Sprintf("projects/%s/locations/%s", projectID, location),
+		Parent:   fmt.Sprintf("projects/%s/locations/%s", projectID, region),
 		BackupId: backupName,
 		Backup: &filestorepb.Backup{
 			SourceInstance:  instanceFullName,

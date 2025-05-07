@@ -11,8 +11,8 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func DeleteOldBackups(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, location string, olderThan time.Duration) error {
-	parent := fmt.Sprintf("projects/%s/locations/%s", projectID, location)
+func DeleteOldBackups(ctx context.Context, client *filestore.CloudFilestoreManagerClient, projectID, region string, olderThan time.Duration) error {
+	parent := fmt.Sprintf("projects/%s/locations/%s", projectID, region)
 
 	req := &filestorepb.ListBackupsRequest{
 		Parent: parent,

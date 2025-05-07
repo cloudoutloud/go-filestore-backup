@@ -25,19 +25,31 @@ In the `k8s` folder then is example manifests on how to deploy this as a cron jo
 Alternatively, you could run this in serverless offerings such as:
 [cloudrun](https://cloud.google.com/run)
 
-## Authentication to GCP
+## Authentication to Google Cloud (GCP)
 
-Script is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc) to authenticate.
+There are two various ways to authenticate to Google Cloud
 
-You can create a [GCP service account](https://cloud.google.com/iam/docs/service-account-overview) and grant the role [file.editor](https://cloud.google.com/iam/docs/understanding-roles#cloud-filestore-roles)
+Script is using [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc)
 
-You can then proceed to generate a service account JSON.
+1. Using Google Cloud service account
+
+This method is not ideal as long lived keys are generated.
+
+You can create a [Google Cloud service account](https://cloud.google.com/iam/docs/service-account-overview) and grant the role [file.editor](https://cloud.google.com/iam/docs/understanding-roles#cloud-filestore-roles)
+
+You can then proceed to generate a service account JSON key. Store key somewhere secure and reference the path in environment variable `GOOGLE_APPLICATION_CREDENTIALS`
+
+2. Workload identity (Recommend if running on GKE)
+
+If using workload identity you do not need to set env var `GOOGLE_APPLICATION_CREDENTIALS`
+
+You will need to create a k8s service account and annotate for full details see offical docs [here](https://cloud.google.com/iam/docs/workload-identity-federation-with-kubernetes)
 
 ## Environment vars needed
 
 `GCP_PROJECT_ID`- GCP project ID where the filestore instance is located
 
-`GCP_LOCATION` - Region name where the filestore instance is located
+`GCP_REGION` - Region name where the filestore instance is located
 
 `GCP_ZONE` - Zone name where the filestore instance is located
 
@@ -47,5 +59,6 @@ You can then proceed to generate a service account JSON.
 
 `BACKUP_DURATION` - Set threshold to deleted backups older than this value in hours (default 168 days/ 7 days)
 
+If using JSON service account key for auth
 `GOOGLE_APPLICATION_CREDENTIALS` - The path to the GCP service account JSON key used for authentication (Not ideal for now as it uses long-lived keys)
 
