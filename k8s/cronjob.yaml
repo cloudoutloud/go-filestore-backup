@@ -10,6 +10,7 @@ spec:
       ttlSecondsAfterFinished: 3600 # 1 hour
       template:
         spec:
+          seviceaccountName: filestore-backup
           containers:
           - name: filestore-backup
             image: filestore-backup:v1.0.1
@@ -17,8 +18,9 @@ spec:
             env:
             - name: GCP_PROJECT_ID
               value: "example-project-1"
-            - name: GCP_LOCATION
+            - name: GCP_REGION
               value: "region"
+            # if filestore instance in tier REGIONAL then zone will be same as region
             - name: GCP_ZONE
               value: "region-a"
             - name: GCP_FILESTORE_INSTANCE

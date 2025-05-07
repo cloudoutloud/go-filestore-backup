@@ -14,7 +14,7 @@ import (
 
 var (
 	projectID      = os.Getenv("GCP_PROJECT_ID")
-	location       = os.Getenv("GCP_LOCATION")
+	region         = os.Getenv("GCP_REGION")
 	zone           = os.Getenv("GCP_ZONE")
 	instanceName   = os.Getenv("GCP_FILESTORE_INSTANCE")
 	fileshareName  = os.Getenv("GCP_FILESTORE_SHARE_NAME")
@@ -36,7 +36,7 @@ func main() {
 	backupName := "automated-backup-" + time.Now().Format("2006-01-02")
 	backupDescription := "Automated daily backup"
 
-	if err := filestore_backup.CreateBackup(ctx, client, projectID, location, zone, instanceName, backupName, backupDescription, fileshareName); err != nil {
+	if err := filestore_backup.CreateBackup(ctx, client, projectID, region, zone, instanceName, backupName, backupDescription, fileshareName); err != nil {
 		log.Printf("Failed to create backup: %v", err)
 	}
 
@@ -53,7 +53,7 @@ func main() {
 
 	olderThan := time.Duration(durationHours) * time.Hour
 
-	if err := filestore_backup.DeleteOldBackups(ctx, client, projectID, location, olderThan); err != nil {
+	if err := filestore_backup.DeleteOldBackups(ctx, client, projectID, region, olderThan); err != nil {
 		log.Fatalf("Failed to delete old backups: %v", err)
 	}
 }
